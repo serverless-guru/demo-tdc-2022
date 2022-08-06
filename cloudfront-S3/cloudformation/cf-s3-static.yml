@@ -1,0 +1,217 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create ACM in us-east-1 from any region
+Parameters:
+  DomainName:
+    Type: String
+  HostedZoneId:
+    Type: String
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+  Policy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: Lambdapolicy
+      Roles:
+        - !Ref Role
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - SSM:*
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ACMCertificateArn-*"
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  AcmCertificateArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub ACMCertificateArn-${AWS::StackName}
+      Type: String
+      Value: none
+  CloudfrontCertificateStackSet:
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      Description: Create ACM in us-east-1
+      PermissionModel: SELF_MANAGED
+      StackInstancesGroup:
+        - DeploymentTargets:
+            Accounts:
+              - !Ref "AWS::AccountId"
+          Regions:
+            - us-east-1
+      StackSetName: !Sub ${AWS::StackName}-CloudfrontACM
+      Parameters:
+        - ParameterKey: DomainName
+          ParameterValue: !Ref DomainName
+        - ParameterKey: HostedZoneId
+          ParameterValue: !Ref HostedZoneId
+        - ParameterKey: RoleArn
+          ParameterValue: !GetAtt Role.Arn
+        - ParameterKey: MasterRegion
+          ParameterValue: !Ref AWS::Region
+        - ParameterKey: SSMName
+          ParameterValue: !Sub ACMCertificateArn-${AWS::StackName}
+      TemplateBody: |
+        AWSTemplateFormatVersion: 2010-09-09
+        Description: Create ACM
+        Parameters:
+          DomainName:
+            Type: String
+          HostedZoneId:
+            Type: String
+          RoleArn:
+            Type: String
+          MasterRegion:
+            Type: String
+          SSMName:
+            Type: String
+        Resources:
+          Certificate:
+            Type: AWS::CertificateManager::Certificate
+            Properties:
+              DomainName: !Ref DomainName
+              DomainValidationOptions:
+                - DomainName: !Ref DomainName
+                  HostedZoneId: !Ref HostedZoneId
+              ValidationMethod: DNS
+          reportUp:
+            Type: AWS::Lambda::Function
+            Properties:
+              Handler: index.handler
+              Role: !Ref RoleArn
+              Code:
+                ZipFile: !Sub |
+                  import boto3
+                  import json
+                  import cfnresponse
+                  def handler(event, context):
+                    print(event)
+                    client = boto3.client('ssm', region_name='${MasterRegion}')
+                    content = event['ResourceProperties']['Input']
+                    client.put_parameter(Name='${SSMName}' , Overwrite=True, Value=content)
+                    cfnresponse.send(event, context, cfnresponse.SUCCESS, {}, "CustomResourcePhysicalID")
+              Runtime: python3.7
+          reportValue:
+            Type: Custom::reporter
+            Properties:
+              ServiceToken: !GetAtt reportUp.Arn
+              Input: !Ref Certificate
+        Outputs:
+          AcmCertificateArn:
+            Value: !Ref Certificate
+            Description: The Certificates ARN
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - Bucket
+      - CloudfrontCertificateStackSet
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Ref DomainName
+        Aliases:
+          - !Ref DomainName
+        ViewerCertificate:
+          AcmCertificateArn: !GetAtt AcmCertificateArn.Value
+          MinimumProtocolVersion: TLSv1.2_2019
+          SslSupportMethod: sni-only
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+        - DomainName:
+            Fn::Select:
+            - 2
+            - Fn::Split:
+              - "/"
+              - Fn::GetAtt:
+                - Bucket
+                - WebsiteURL
+          Id: siteS3Bucket
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
+          OriginCustomHeaders:
+            - HeaderName: "user-agent"
+              HeaderValue: !Ref HostedZoneId
+        DefaultCacheBehavior:
+          TargetOriginId: siteS3Bucket
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          Compress: true
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref DomainName
+      WebsiteConfiguration:
+        ErrorDocument: 404.html
+        IndexDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Statement:
+          - Action:
+            - 's3:GetObject'
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref Bucket
+                  - /*
+            Principal: '*'
+            Condition:
+              StringEquals:
+                'aws:UserAgent':
+                  - !Ref HostedZoneId
+
+  DNS:
+    Type: AWS::Route53::RecordSetGroup
+    DependsOn: Distribution
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+      - Name: !Ref DomainName
+        Type: A
+        AliasTarget:
+          HostedZoneId: Z2FDTNDATAQYW2
+          DNSName:
+            Fn::GetAtt:
+            - Distribution
+            - DomainName
+      - Name: !Ref DomainName
+        Type: AAAA
+        AliasTarget:
+          HostedZoneId: Z2FDTNDATAQYW2
+          DNSName:
+            Fn::GetAtt:
+            - Distribution
+            - DomainName

@@ -1,5 +1,5 @@
-## Cloudfomration
-cloudformation/**/paramters.json
+## Cloudformation
+**/cloudformation/parameters.json
 
 ## Terraform
 # Local .terraform directories

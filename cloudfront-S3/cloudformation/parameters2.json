@@ -1,0 +1,11 @@
+[
+    {
+      "ParameterKey": "DomainName",
+      "ParameterValue": "cf-s3-demo2.serverlessguru.danielmuller.me"
+    },
+    {
+      "ParameterKey": "HostedZoneId",
+      "ParameterValue": "Z0274561FTGW8USOOTRG"
+    }
+  ]
+  
