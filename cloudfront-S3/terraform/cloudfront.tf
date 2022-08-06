@@ -16,6 +16,8 @@ module "cloudfront" {
   price_class      = "PriceClass_All"
   retain_on_delete = false
 
+  tags = local.tags
+
   origin = {
     siteS3Bucket = {
       domain_name = module.bucket.s3_bucket_website_domain
