@@ -28,3 +28,13 @@ terraform {
     }
 }
 ```
+## Notes
+
+### Cons
+### Pros
+- Use of re-usable modules (community or own)
+- Ease of Multi region deploys
+- Output parameters can be used cross region
+- Easy string manipulations
+- File strucuture can be what we want/prefer
+

@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "DomainName",
+        "ParameterValue": "${projectName}.${TLD}"
+    },
+    {
+        "ParameterKey": "ProjectName",
+        "ParameterValue": "${projectName}"
+    },
+    {
+        "ParameterKey": "DeployBucket",
+        "ParameterValue": "${deployBucket}"
+    },
+    {
+        "ParameterKey": "DeployPath",
+        "ParameterValue": "${projectName}"
+    },
+    {
+        "ParameterKey": "HostedZoneId",
+        "ParameterValue": "${hostedZoneId}"
+    }
+]

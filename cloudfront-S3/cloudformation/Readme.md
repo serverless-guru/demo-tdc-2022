@@ -58,3 +58,14 @@ export AWS_PROFILE=myProfile
 fqdn=blog.example.com
 aws s3 sync public/* --cache-control max-age=3600 s3://${fqdn}/
 ```
+
+## Notes
+
+### Cons
+- Cross region deploys is difficult: Can't read cross region Cloudformation outputs. Needs custom resources backed by Lambda. Stack sets helps.
+- Can't reference existing infrastructure (Route53 Hosted Zone)
+- Changes outside Cloudformation aren't rolled back on subsequent deploys
+- String manipulations are complex
+### Pros
+- AWS's own language (up to date, normally)
+

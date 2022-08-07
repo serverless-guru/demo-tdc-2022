@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "DomainName",
+        "ParameterValue": "apigw-demo-cfn.serverlessguru.danielmuller.me"
+      },
+      {
+        "ParameterKey": "ProjectName",
+        "ParameterValue": "apigw-demo-cfn"
+      },
+      {
+        "ParameterKey": "DeployBucket",
+        "ParameterValue": "com.serverless.935443220863.eu-central-1.deploys"
+      },
+      {
+        "ParameterKey": "DeployPath",
+        "ParameterValue": "apigw-demo-cfn/HelloWorld.zip"
+      },
+      {
+        "ParameterKey": "HostedZoneId",
+        "ParameterValue": "Z0274561FTGW8USOOTRG"
+      }
+]
