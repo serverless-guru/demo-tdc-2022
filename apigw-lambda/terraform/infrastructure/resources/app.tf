@@ -4,7 +4,7 @@ data "aws_caller_identity" "current" {}
 module "tdc_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "tushar-sharma-tdc-vpc"
+  name = "apigw-lambda-tf-app-vpc"
   cidr = "10.0.0.0/16"
 
   azs             = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
@@ -55,7 +55,7 @@ module "hello_world_api_route_part_v1_test" {
   api_gw_id  = module.hello_world_api.id
 }
 
-module "refresh_api_token_lambda" {
+module "hello_world_lambda" {
   source     = "../modules/lambda"
   region     = var.region
   service    = var.service
@@ -77,8 +77,8 @@ module "hello_world_api_route_handler_v1_test" {
   api_gw_id         = module.hello_world_api.id
   http_method       = "GET"
   resource_path     = module.hello_world_api_route_part_v1_test.resource_path
-  lambda_invoke_arn = module.refresh_api_token_lambda.invoke_arn
-  lambda_func_name  = module.refresh_api_token_lambda.name
+  lambda_invoke_arn = module.hello_world_lambda.invoke_arn
+  lambda_func_name  = module.hello_world_lambda.name
 }
 
 ##### END Lambda Integration (/v1/test) #####

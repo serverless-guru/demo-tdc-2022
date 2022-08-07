@@ -2,7 +2,7 @@ locals {
   tags = merge(var.tags,
     {
       Terraform = true
-      Service   = "apigw-lambda-app"
+      Service   = "apigw-lambda-tf-app"
       CreatedBy = var.created_by
   })
 }
@@ -13,7 +13,7 @@ variable "region" {
 
 variable "service" {
   type        = string
-  default     = "apigw-lambda-app"
+  default     = "apigw-lambda-tf-app"
   description = "service to match what serverless framework deploys"
 }
 

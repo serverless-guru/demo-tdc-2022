@@ -9,7 +9,7 @@ terraform {
   required_version = ">= 1.0.1"
   backend "s3" {
     bucket         = "tushar-sharma-slsguru-tdc-demo-terraform-backend"
-    key            = "apigw-lambda-app.tfstate"
+    key            = "apigw-lambda-tf-app.tfstate"
     region         = "ap-south-1"
     dynamodb_table = "tushar-sharma-slsguru-tdc-demo-terraform-backend-lock"
   }
