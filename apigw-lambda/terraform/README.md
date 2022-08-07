@@ -21,3 +21,9 @@ Every time you need to deploy. You need to run the following.
 ```shell
 ./deploy.sh
 ```
+
+## Notes
+
+- The path part is annoying. This is where frameworks like serverless framework shines. I don't have
+  to deal with connecting parent path to child path multiple times to create a /a/b/c/d api.
+  

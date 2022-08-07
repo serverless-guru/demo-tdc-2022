@@ -13,3 +13,10 @@ terraform init -input=false
 terraform plan
 
 terraform apply -input=false
+
+cd ../..
+
+rm -rf dist
+rm -rf infrastructure/modules/lambda/tmp
+rm -rf infrastructure/resources/.terraform
+rm infrastructure/resources/.terraform.lock.hcl
