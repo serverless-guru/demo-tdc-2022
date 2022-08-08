@@ -1,4 +1,4 @@
-# apigw-lambda terraform
+# apigw-lambda cdk
 
 ## Inititalize
 
@@ -10,6 +10,7 @@
 One time steps.
 
 ```shell
+npm install -g cdk
 chmod +x terraform-setup.sh
 chmod +x deploy.sh
 chmod +x destroy.sh
@@ -22,6 +23,17 @@ Every time you need to deploy. You need to run the following.
 ```shell
 ./deploy.sh
 ```
+
+The `cdk.json` file tells the CDK Toolkit how to execute your app.
+
+## Useful commands
+
+* `npm run build`   compile typescript to js
+* `npm run watch`   watch for changes and compile
+* `npm run test`    perform the jest unit tests
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk synth`       emits the synthesized CloudFormation template
 
 ## Notes
 
