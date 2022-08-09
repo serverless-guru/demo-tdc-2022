@@ -28,18 +28,13 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+- `npm run build` compile typescript to js
+- `npm run watch` watch for changes and compile
+- `npm run test` perform the jest unit tests
+- `cdk deploy` deploy this stack to your default AWS account/region
+- `cdk diff` compare deployed stack with current state
+- `cdk synth` emits the synthesized CloudFormation template
 
 ## Notes
 
-- The path part is annoying. This is where frameworks like serverless framework shines. I don't have
-  to deal with connecting parent path to child path multiple times to create a /a/b/c/d api.
-- Lots of freedom in terms of deploying infrastructure components.
-- Lots of freedom in passing values around different resources.
-- I get all the terraform utility function support.
-- Starting a new project is not confusing.
+- Errors are sometimes not clear. I couldn't use my own vpc availability zones.

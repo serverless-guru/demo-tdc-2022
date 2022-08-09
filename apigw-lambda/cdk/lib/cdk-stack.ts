@@ -2,7 +2,7 @@ import type { Construct } from 'constructs';
 
 import { join } from 'path';
 
-import { Stack, type StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
 
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as lambdas from 'aws-cdk-lib/aws-lambda';
@@ -13,10 +13,10 @@ export class CdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const vpc = new ec2.Vpc(this, 'TheVPC', {
       cidr: '10.0.0.0/16',
       vpcName: 'apigw-lambda-cdk-app-vpc',
-      availabilityZones: ['ap-south-1a', 'ap-south-1b', 'ap-south-1c'],
       maxAzs: 3,
       natGateways: 1,
       subnetConfiguration: [
@@ -39,7 +39,6 @@ export class CdkStack extends Stack {
       deployOptions: {
         stageName: 'dev',
       },
-      // policy
     });
 
     const v1 = api.root.addResource('v1');
@@ -56,17 +55,13 @@ export class CdkStack extends Stack {
     const lambda = new lambdas.Function(this, 'Function', {
       codeSigningConfig,
       runtime: lambdas.Runtime.NODEJS_16_X,
-      handler: 'index.handler',
-      code: lambdas.Code.fromAsset(join(__dirname, 'lambda-handler')),
+      handler: 'hello-world.handler',
+      code: lambdas.Code.fromAsset(join(__dirname, '../dist'), {}),
     });
 
     const integration = new apigateway.LambdaIntegration(lambda, {
-      proxy: false,
-      requestParameters: {},
+      proxy: true,
       allowTestInvoke: true,
-      requestTemplates: {},
-      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-      integrationResponses: [],
     });
 
     test.addMethod('GET', integration, {

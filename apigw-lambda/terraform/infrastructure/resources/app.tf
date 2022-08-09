@@ -82,3 +82,27 @@ module "hello_world_api_route_handler_v1_test" {
 }
 
 ##### END Lambda Integration (/v1/test) #####
+
+
+## API Deployment ##
+
+resource "aws_api_gateway_deployment" "hello_world_api" {
+  rest_api_id = module.hello_world_api.id
+
+  triggers = {
+    # Will always redeploy
+    redeployment = sha1(uuid())
+  }
+
+  depends_on = [module.hello_world_api, module.hello_world_api_route_handler_v1_test]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "api" {
+  deployment_id = aws_api_gateway_deployment.hello_world_api.id
+  rest_api_id   = module.hello_world_api.id
+  stage_name    = "dev"
+}

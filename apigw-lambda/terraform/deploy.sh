@@ -10,9 +10,7 @@ cd infrastructure/resources
 
 terraform init -input=false
 
-terraform plan
-
-terraform apply -input=false
+terraform apply -input=false -auto-approve
 
 cd ../..
 
