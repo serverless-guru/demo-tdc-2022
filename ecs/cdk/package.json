@@ -1,0 +1,49 @@
+{
+  "name": "cdk",
+  "version": "0.1.0",
+  "bin": {
+    "cdk": "bin/cdk.js"
+  },
+  "scripts": {
+    "build:app": "npx webpack build --config ./webpack.config.js --no-stats",
+    "lint": "yarn run prettier:fix && yarn run ts:check && yarn run eslint:check",
+    "ts:check": "npx tsc --noEmit",
+    "eslint:fix": "npx eslint src --ext ts,js --fix",
+    "eslint:check": "npx eslint src --ext ts,js",
+    "prettier:fix": "npx prettier --write '**/*.{ts,js,json,yml,yaml,md}'",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.2",
+    "@types/prettier": "2.6.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
+    "aws-cdk": "2.33.0",
+    "ts-node": "^10.9.1",
+    "typescript": "~3.9.7",
+    "@types/aws-lambda": "8.10.101",
+    "@types/eslint": "8.4.5",
+    "@types/node": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "5.32.0",
+    "@typescript-eslint/parser": "5.32.0",
+    "clean-webpack-plugin": "4.0.0",
+    "eslint": "8.21.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-jsdoc": "39.3.4",
+    "nodemon-webpack-plugin": "4.8.0",
+    "prettier": "2.7.1",
+    "ts-loader": "9.3.1",
+    "tsconfig-paths-webpack-plugin": "4.0.0",
+    "webpack": "5.74.0",
+    "webpack-cli": "4.10.0",
+    "webpack-node-externals": "3.0.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.33.0",
+    "constructs": "^10.0.0",
+    "source-map-support": "^0.5.21"
+  }
+}
