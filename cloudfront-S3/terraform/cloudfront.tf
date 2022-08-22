@@ -20,7 +20,7 @@ module "cloudfront" {
 
   origin = {
     siteS3Bucket = {
-      domain_name = module.bucket.s3_bucket_website_domain
+      domain_name = module.bucket.s3_bucket_website_endpoint
       custom_origin_config = {
         http_port              = 80
         https_port             = 443

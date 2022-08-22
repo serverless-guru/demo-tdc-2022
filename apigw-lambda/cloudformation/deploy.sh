@@ -20,6 +20,5 @@ aws cloudformation create-stack \
   --template-body file://infrastructure/template.yml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameters file://infrastructure/parameters.json
-```
 
 rm -rf dist/
