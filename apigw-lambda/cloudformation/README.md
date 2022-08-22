@@ -7,9 +7,9 @@ If you don't already have one, create a deployment bucket to upload your zipped 
 ```bash
 export AWS_PROFILE=myProfile
 export AWS_REGION=eu-central-1
-TLD=example.com
-projectName=myapi
-deployBucket=myBucket
+TLD=example.com \
+projectName=myapi \
+deployBucket=myBucket \
 ./deploy.sh
 ```
 ## Notes
