@@ -56,7 +56,7 @@ Upload your index.html and 404.html
 ```bash
 export AWS_PROFILE=myProfile
 fqdn=blog.example.com
-aws s3 sync public/* --cache-control max-age=3600 s3://${fqdn}/
+aws s3 sync public/* --acl public-read --cache-control max-age=3600 s3://${fqdn}/
 ```
 
 ## Notes
