@@ -1,0 +1,9 @@
+buildArch {
+    namespace='ecommerce'
+    vm_enabled='false'
+    custombuild = 'true'
+    int_env='SKIP'
+    uat_env='SKIP'
+    stg_env='SKIP'
+    prd_env='SKIP'
+}

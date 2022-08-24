@@ -44,27 +44,44 @@ export class EcsService extends Stack {
       })
     );
 
+
+    // the role assumed by the task and its containers
+    const ecsRole = new iam.Role(this, "ecs-exec-role", {
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+      roleName: "ecs-role",
+      description: "Role that the api task definitions use to run the api code",
+    });
+
+    ecsRole.addManagedPolicy(
+      iam.ManagedPolicy.fromManagedPolicyArn(
+        this,
+        "ecs-exec-role-managed",
+        "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+      )
+    );
+
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
       family: "task",
       taskRole: taskRole,
+      executionRole: ecsRole,
     });
 
     // The docker container including the image to use
     const container = taskDefinition.addContainer("container", {
-      image: ecs.RepositoryImage.fromRegistry("nginx:latest"),
+      image: ecs.RepositoryImage.fromRegistry("public.ecr.aws/nginx/nginx:latest"),
       memoryLimitMiB: 512,
+      portMappings: [{
+        containerPort: 80,
+      }],
       environment: {
-        DB_HOST: ""
+        "NGINX_PORT": "80"
       },
       // store the logs in cloudwatch 
       logging: ecs.LogDriver.awsLogs({ streamPrefix: "example-api-logs" }),
     });
 
-    // the docker container port mappings within the container
-    container.addPortMappings({ containerPort: 80 });
-
     const sg = new ec2.SecurityGroup(this, "ServiceSG", {
-      securityGroupName: "",
+      securityGroupName: "ecs-group",
       vpc: props.vpc,
       allowAllOutbound: true,
     })
@@ -72,8 +89,8 @@ export class EcsService extends Stack {
     sg.addIngressRule(ec2.Peer.anyIpv4(), new ec2.Port(
       {
         protocol: ec2.Protocol.TCP,
-        toPort: -1,
-        fromPort: -1,
+        toPort: 80,
+        fromPort: 80,
         stringRepresentation: "stringRepresentation"
       }
     ), "allow all", false)
@@ -83,6 +100,7 @@ export class EcsService extends Stack {
         subnets: props.vpc.publicSubnets,
       },
       securityGroups: [sg],
+      assignPublicIp: true,
       enableExecuteCommand: true,
       maxHealthyPercent: 200,
       minHealthyPercent: 100,

@@ -15,4 +15,4 @@ const newtorkStack = new NetworkStack(app, 'ecs-cdk-network', {
 new EcsService(app, 'ecs-cdk-service', {
   vpc: newtorkStack.vpc,
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-});
+}).addDependency(newtorkStack)

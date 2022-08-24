@@ -1,0 +1,118 @@
+.git
+.vscode
+infrastructure
+docker
+
+.git/*
+.vscode/*
+infrastructure/*
+docker/*
+
+# Files
+aws-profile-setup.sh
+buildspec.yml
+Jenkinsfile
+Dockerfile
+.prettierrc
+README.md
+run.sh
+
+# ignore typical folders
+.git/
+.DS_Store
+.gitignore
+Dockerfile
+DockerfileRS
+TODO
+npm-debug
+node_modules/
+docker-compose.*.yml
+docker-compose.yml
+src/aws
+
+# vscode
+.vscode
+
+# mongodb data
+data
+mongodb-*
+
+# build files
+dist/
+
+# log files
+*.log
+
+# ignore all markdown files (md) beside all README*.md other than README-secret.md
+*.md
+!README*.md
+README-secret.md
+README.md
+
+# To prevent storing dev/temporary container data
+*.csv
+/tmp/*
+
+# other folders and files
+.ipynb_checkpoints/*
+/notebooks/*
+/unused/*
+env.*
+/devops/*
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+
+pids
+logs
+results
+tmp
+
+# Build
+public/css/main.css
+
+# Coverage reports
+coverage
+
+# API keys and secrets
+.env
+
+# Dependency directory
+node_modules
+bower_components
+
+# Editors
+.idea
+*.iml
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+dist
+
+# Ignore built ts files
+dist/**/*
+
+# Ignore built ts files
+dist/**/*
+
+# config files
+data
+output.ndjson
+
+mongodb-*
+
+error.log
+combined.log
+src/data-workflow/workflows/file.js
+vpc.yaml
+deploy-change-set.sh
+deploy.sh
+.npmrc
